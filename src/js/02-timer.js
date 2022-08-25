@@ -7,12 +7,12 @@ const days = document.querySelector("[data-days]");
 const hours = document.querySelector("[data-hours]");
 const mins = document.querySelector("[data-minutes]");
 const secs = document.querySelector("[data-seconds]");
-let timerID;
+const startBtn = document.querySelector("[data-start]");
 
-// Notiflix.Notify.success("Sol lucet omnibus");
-// Notiflix.Notify.failure("Qui timide rogat docet negare");
-// Notiflix.Notify.warning("Memento te hominem esse");
-// Notiflix.Notify.info("Cogito ergo sum");
+// Global vars
+let timerID;
+let timeLeft;
+let selectedDate;
 
 const options = {
     enableTime: true,
@@ -21,38 +21,64 @@ const options = {
     minuteIncrement: 1,
     // minDate: "today",
     onClose(selectedDates) {
-        setTimer(selectedDates[0]);
+        selectedDate = selectedDates[0];
     },
 };
 
 flatpickr(input, options);
 
-// Set timer func
-function setTimer(selDate) {
-    const today = new Date();
-    const timeLeft = selDate - today;
+// startBtn.disabled = true;
+startBtn.addEventListener('click', () => {
+    setTimerDate(selectedDate);
+});
 
-    if (timeLeft < 1) {
-        Notiflix.Notify.failure("Please choose a date in the future");
+// Check date
+function setTimerDate(selectedDate) {
+
+    if (!selectedDate) {
+        Notiflix.Notify.failure("No selected date");
         return;
     }
 
-    timerID = setInterval(() => startTimer(timeLeft), 1000);
+    const today = new Date();
+    timeLeft = Math.trunc((selectedDate - today) / 1000);
+
+    if (timeLeft < 1) {
+        Notiflix.Notify.failure("Please choose a date in the future");
+        startBtn.disabled = true;
+        return;
+    }
+
+    startBtn.disabled = false;
+    setTimer();
 }
 
-function startTimer(timeLeft) {
+// Set timer func
+function setTimer() {
     console.log("Timer has started");
+    if (timerID) clearInterval(timerID);
+    timerID = setInterval(startTimer, 1000);
+}
 
+// Start timer
+function startTimer() {
+    console.log(timeLeft);
     const data = convertMs(timeLeft);
     console.log(data);
     days.innerText = data.days;
     hours.innerText = data.hours;
     mins.innerText = data.minutes;
     secs.innerText = data.seconds;
+    timeLeft--;
+    checkTime(timeLeft);
+}
 
-    timeLeft = timeLeft - 1;
-    console.log(timeLeft);
-
+// Checking time is out or no
+function checkTime(sec) {
+    if (sec < 0) {
+        clearInterval(timerID);
+        Notiflix.Notify.success("Time has come!");
+    }
 }
 
 function addLeadingZero(value) {
@@ -61,7 +87,7 @@ function addLeadingZero(value) {
 
 function convertMs(ms) {
     // Number of milliseconds per unit of time
-    const second = 1000;
+    const second = 1;
     const minute = second * 60;
     const hour = minute * 60;
     const day = hour * 24;
