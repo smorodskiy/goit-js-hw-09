@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import { indexOf } from "lodash";
 import Notiflix from "notiflix";
 
 const input = document.getElementById("datetime-picker");
@@ -9,6 +10,164 @@ const mins = document.querySelector("[data-minutes]");
 const secs = document.querySelector("[data-seconds]");
 const startBtn = document.querySelector("[data-start]");
 
+const displayTest = document.querySelectorAll(".inn");
+console.log(displayTest);
+
+const display = {
+    // DAYS
+    days: {
+        setCurr(nums) {
+            this.currFirstDigit.up.innerText = [...nums][0];
+            this.currSecondDigit.up.innerText = [...nums][1];
+            this.currFirstDigit.down.innerText = [...nums][0];
+            this.currSecondDigit.down.innerText = [...nums][1];
+        },
+
+        setPrev(nums) {
+            this.prevFirstDigit.up.innerText = [...nums][0];
+            this.prevSecondDigit.up.innerText = [...nums][1];
+            this.prevFirstDigit.down.innerText = [...nums][0];
+            this.prevSecondDigit.down.innerText = [...nums][1];
+        },
+
+        prevFirstDigit: {
+            up: document.querySelector(".days-f .num.prev .up .inn"),
+            down: document.querySelector(".days-f .num.prev .down .inn"),
+        },
+
+        currFirstDigit: {
+            up: document.querySelector(".days-f .num.curr .up .inn"),
+            down: document.querySelector(".days-f .num.curr .down .inn"),
+        },
+
+        prevSecondDigit: {
+            up: document.querySelector(".days-s .num.prev .up .inn"),
+            down: document.querySelector(".days-s .num.prev .down .inn"),
+        },
+
+        currSecondDigit: {
+            up: document.querySelector(".days-s .num.curr .up .inn"),
+            down: document.querySelector(".days-s .num.curr .down .inn"),
+        },
+    },
+
+    // HOURS
+    hours: {
+        setCurr(nums) {
+            this.currFirstDigit.up.innerText = [...nums][0];
+            this.currSecondDigit.up.innerText = [...nums][1];
+            this.currFirstDigit.down.innerText = [...nums][0];
+            this.currSecondDigit.down.innerText = [...nums][1];
+        },
+
+        setPrev(nums) {
+            this.prevFirstDigit.up.innerText = [...nums][0];
+            this.prevSecondDigit.up.innerText = [...nums][1];
+            this.prevFirstDigit.down.innerText = [...nums][0];
+            this.prevSecondDigit.down.innerText = [...nums][1];
+        },
+
+        prevFirstDigit: {
+            up: document.querySelector(".hours-f .num.prev .up .inn"),
+            down: document.querySelector(".hours-f .num.prev .down .inn"),
+        },
+
+        currFirstDigit: {
+            up: document.querySelector(".hours-f .num.curr .up .inn"),
+            down: document.querySelector(".hours-f .num.curr .down .inn"),
+        },
+
+        prevSecondDigit: {
+            up: document.querySelector(".hours-s .num.prev .up .inn"),
+            down: document.querySelector(".hours-s .num.prev .down .inn"),
+        },
+
+        currSecondDigit: {
+            up: document.querySelector(".hours-s .num.curr .up .inn"),
+            down: document.querySelector(".hours-s .num.curr .down .inn"),
+        },
+    },
+
+    // MINUTES
+    mins: {
+        setCurr(nums) {
+            this.currFirstDigit.up.innerText = [...nums][0];
+            this.currSecondDigit.up.innerText = [...nums][1];
+            this.currFirstDigit.down.innerText = [...nums][0];
+            this.currSecondDigit.down.innerText = [...nums][1];
+        },
+
+        setPrev(nums) {
+            this.prevFirstDigit.up.innerText = [...nums][0];
+            this.prevSecondDigit.up.innerText = [...nums][1];
+            this.prevFirstDigit.down.innerText = [...nums][0];
+            this.prevSecondDigit.down.innerText = [...nums][1];
+        },
+
+        prevFirstDigit: {
+            up: document.querySelector(".mins-f .num.prev .up .inn"),
+            down: document.querySelector(".mins-f .num.prev .down .inn"),
+        },
+
+        currFirstDigit: {
+            up: document.querySelector(".mins-f .num.curr .up .inn"),
+            down: document.querySelector(".mins-f .num.curr .down .inn"),
+        },
+
+        prevSecondDigit: {
+            up: document.querySelector(".mins-s .num.prev .up .inn"),
+            down: document.querySelector(".mins-s .num.prev .down .inn"),
+        },
+
+        currSecondDigit: {
+            up: document.querySelector(".mins-s .num.curr .up .inn"),
+            down: document.querySelector(".mins-s .num.curr .down .inn"),
+        },
+    },
+
+    // SECONDS
+    secs: {
+        setCurr(nums) {
+            this.currFirstDigit.up.innerText = [...nums][0];
+            this.currSecondDigit.up.innerText = [...nums][1];
+            this.currFirstDigit.down.innerText = [...nums][0];
+            this.currSecondDigit.down.innerText = [...nums][1];
+        },
+
+        setPrev(nums) {
+            this.prevFirstDigit.up.innerText = [...nums][0];
+            this.prevSecondDigit.up.innerText = [...nums][1];
+            this.prevFirstDigit.down.innerText = [...nums][0];
+            this.prevSecondDigit.down.innerText = [...nums][1];
+        },
+
+        prevFirstDigit: {
+            root: document.querySelector(".secs-f .num.prev"),
+            up: document.querySelector(".secs-f .num.prev .up .inn"),
+            down: document.querySelector(".secs-f .num.prev .down .inn"),
+        },
+
+        currFirstDigit: {
+            root: document.querySelector(".secs-f .num.curr"),
+            up: document.querySelector(".secs-f .num.curr .up .inn"),
+            down: document.querySelector(".secs-f .num.curr .down .inn"),
+        },
+
+        prevSecondDigit: {
+            root: document.querySelector(".secs-s .num.prev"),
+            up: document.querySelector(".secs-s .num.prev .up .inn"),
+            down: document.querySelector(".secs-s .num.prev .down .inn"),
+        },
+
+        currSecondDigit: {
+            root: document.querySelector(".secs-s .num.curr"),
+            up: document.querySelector(".secs-s .num.curr .up .inn"),
+            down: document.querySelector(".secs-s .num.curr .down .inn"),
+        },
+    },
+};
+
+console.log(display);
 // Global vars
 let timerID;
 let timeLeft;
@@ -73,13 +232,68 @@ function setTimer() {
 function renderTime() {
     // console.log(timeLeft);
     const data = convertMs(timeLeft);
+    const dataBackground = convertMs(timeLeft - 1);
     // console.log(data);
-    days.innerText = addLeadingZero(data.days);
-    hours.innerText = addLeadingZero(data.hours);
-    mins.innerText = addLeadingZero(data.minutes);
-    secs.innerText = addLeadingZero(data.seconds);
+
+    days.innerText = data.days;
+    hours.innerText = data.hours;
+    mins.innerText = data.minutes;
+    secs.innerText = data.seconds;
+
+    // let combine = days.innerText + hours.innerText + mins.innerText + secs.innerText;
+    // let combineBg =
+    //     dataBackground.days +
+    //     dataBackground.hours +
+    //     dataBackground.minutes +
+    //     dataBackground.seconds;
+
+    // Visible numbers
+    display.days.setCurr(data.days.toString());
+    display.hours.setCurr(data.hours.toString());
+    display.mins.setCurr(data.minutes.toString());
+    display.secs.setCurr(data.seconds.toString());
+
+    // Background numbers
+    display.days.setPrev(dataBackground.days.toString());
+    display.hours.setPrev(dataBackground.hours.toString());
+    display.mins.setPrev(dataBackground.minutes.toString());
+    display.secs.setPrev(dataBackground.seconds.toString());
+
+    const arrVisibleNums = data.days + data.hours + data.minutes + data.seconds;
+    const arrBgNums =
+        dataBackground.days +
+        dataBackground.hours +
+        dataBackground.minutes +
+        dataBackground.seconds;
+
+    console.log([...arrVisibleNums]);
+    console.log([...arrBgNums]);
+
+    const indexDigits = [...arrVisibleNums].forEach((item, index) => {
+ 
+        if ([...arrBgNums][index] != item) return index;
+    })
+
+    console.log(indexDigits);
+    // toggleClasses(display.secs.prevSecondDigit.root);
+
+    // console.log("ac " + [...combine]);
+    // console.log("bg " + [...combineBg]);
+
     timeLeft--;
     isTimeCome(timeLeft);
+}
+
+function toggleClasses() {
+    const isActive = display.secs.prevSecondDigit.root.classList.contains("active");
+    const isBefore = display.secs.prevSecondDigit.root.classList.contains("before");
+
+    if (!isActive && !isBefore) {
+        display.secs.prevSecondDigit.root.classList.add("before");
+    } else {
+        display.secs.prevSecondDigit.root.classList.toggle("active", isBefore);
+        display.secs.prevSecondDigit.root.classList.toggle("before", isActive);
+    }
 }
 
 function timerOff(id) {
@@ -111,13 +325,13 @@ function convertMs(ms) {
     const day = hour * 24;
 
     // Remaining days
-    const days = Math.floor(ms / day);
+    const days = addLeadingZero(Math.floor(ms / day));
     // Remaining hours
-    const hours = Math.floor((ms % day) / hour);
+    const hours = addLeadingZero(Math.floor((ms % day) / hour));
     // Remaining minutes
-    const minutes = Math.floor(((ms % day) % hour) / minute);
+    const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
     // Remaining seconds
-    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+    const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
 
     return { days, hours, minutes, seconds };
 }
