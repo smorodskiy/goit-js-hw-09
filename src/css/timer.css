@@ -60,9 +60,9 @@ div.flip .num {
 
 }
 
-div.flip .num:first-child {
+/* div.flip .num:first-child {
     z-index: 2;
-}
+} */
 
 div.flip .num a {
     display: block;
