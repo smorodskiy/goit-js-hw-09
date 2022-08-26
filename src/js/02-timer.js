@@ -22,67 +22,85 @@ const options = {
     // minDate: "today",
     onClose(selectedDates) {
         selectedDate = selectedDates[0];
+        checkDate(selectedDate);
     },
 };
 
 flatpickr(input, options);
 
-// startBtn.disabled = true;
-startBtn.addEventListener('click', () => {
-    setTimerDate(selectedDate);
+startBtn.disabled = true;
+
+startBtn.addEventListener("click", () => {
+    if (checkDate(selectedDate)) setTimer();
 });
 
 // Check date
-function setTimerDate(selectedDate) {
+function checkDate(selectedDate) {
+    if (timerID) timerOff(timerID);
 
-    if (!selectedDate) {
+    // Return if date is not selected
+    if (selectedDate === undefined) {
         Notiflix.Notify.failure("No selected date");
-        return;
+        startBtn.disabled = true;
+        return false;
     }
 
+    // Current date
     const today = new Date();
+    // How much time you have
     timeLeft = Math.trunc((selectedDate - today) / 1000);
 
+    // Return if selected date is not in future
     if (timeLeft < 1) {
         Notiflix.Notify.failure("Please choose a date in the future");
         startBtn.disabled = true;
-        return;
+        return false;
     }
 
     startBtn.disabled = false;
-    setTimer();
+    return true;
 }
 
 // Set timer func
 function setTimer() {
     console.log("Timer has started");
-    if (timerID) clearInterval(timerID);
-    timerID = setInterval(startTimer, 1000);
+    startBtn.disabled = true;
+    if (timerID) timerOff(timerID);
+    timerID = setInterval(renderTime, 1000);
 }
 
 // Start timer
-function startTimer() {
-    console.log(timeLeft);
+function renderTime() {
+    // console.log(timeLeft);
     const data = convertMs(timeLeft);
-    console.log(data);
-    days.innerText = data.days;
-    hours.innerText = data.hours;
-    mins.innerText = data.minutes;
-    secs.innerText = data.seconds;
+    // console.log(data);
+    days.innerText = addLeadingZero(data.days);
+    hours.innerText = addLeadingZero(data.hours);
+    mins.innerText = addLeadingZero(data.minutes);
+    secs.innerText = addLeadingZero(data.seconds);
     timeLeft--;
-    checkTime(timeLeft);
+    isTimeCome(timeLeft);
+}
+
+function timerOff(id) {
+    clearInterval(id);
+    const zero = "00";
+    days.innerText = zero;
+    hours.innerText = zero;
+    mins.innerText = zero;
+    secs.innerText = zero;
 }
 
 // Checking time is out or no
-function checkTime(sec) {
+function isTimeCome(sec) {
     if (sec < 0) {
-        clearInterval(timerID);
+        timerOff(timerID);
         Notiflix.Notify.success("Time has come!");
     }
 }
 
 function addLeadingZero(value) {
-    function padStart() {}
+    return value.toString().padStart(2, "0");
 }
 
 function convertMs(ms) {
