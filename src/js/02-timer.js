@@ -288,9 +288,9 @@ function render() {
 
     // Reduce time
     timeLeft--;
-        
+    if (timeLeft < 0) timeLeft = 0;
+
     // Check time
-    console.log(timeLeft);
     isTimeCome(timeLeft);
 }
 
@@ -301,6 +301,7 @@ function setDisplay(indexChangedDigits, dataCurrString, dataPrevString) {
         const beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".before .up .inn");
         const beforeDown =
             indexOfDigits[digit * 2].parentElement.querySelector(".before .down .inn");
+        // Search "active" class
         const activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".active .up .inn");
         const activeDown =
             indexOfDigits[digit * 2].parentElement.querySelector(".active .down .inn");
@@ -330,10 +331,11 @@ function timerOff(id) {
 
 // Checking time is out or no
 function isTimeCome(sec) {
-    if (sec < 0) {
+    if (sec == 0) {
         timerOff(timerID);
-        // toggleClasses([0,1,2,3,4,5,6]);
-        resetDigits();
+        setDisplay([0, 1, 2, 3, 4, 5, 6, 7], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]);
+        toggleClasses([0, 1, 2, 3, 4, 5, 6, 7]);
+        // resetDigits();
         startBtn.disabled = false;
         Notiflix.Notify.success("Time has come!");
     }
