@@ -186,29 +186,6 @@ const options = {
     },
 };
 
-// Remove all anim classes
-function resetDigits() {
-    const zero = "00";
-    display.days.setPrev(zero);
-    display.hours.setPrev(zero);
-    display.mins.setPrev(zero);
-    display.secs.setPrev(zero);
-    display.days.setCurr(zero);
-    display.hours.setCurr(zero);
-    display.mins.setCurr(zero);
-    display.secs.setCurr(zero);
-
-    // For simple timer
-    days.innerText = zero;
-    hours.innerText = zero;
-    mins.innerText = zero;
-    secs.innerText = zero;    
-    indexOfDigits.forEach((element) => {
-        element.classList.remove("before");
-        element.classList.remove("active");
-    });
-}
-
 // Init calendar
 flatpickr(input, options);
 
@@ -311,8 +288,9 @@ function render() {
 
     // Reduce time
     timeLeft--;
-
+        
     // Check time
+    console.log(timeLeft);
     isTimeCome(timeLeft);
 }
 
@@ -354,11 +332,35 @@ function timerOff(id) {
 function isTimeCome(sec) {
     if (sec < 0) {
         timerOff(timerID);
-        toggleClasses([0,1,2,3,4,5,6]);
-        // resetDigits();        
+        // toggleClasses([0,1,2,3,4,5,6]);
+        resetDigits();
         startBtn.disabled = false;
         Notiflix.Notify.success("Time has come!");
     }
+}
+
+// Remove all anim classes
+function resetDigits() {
+    const zero = "00";
+    display.days.setPrev(zero);
+    display.hours.setPrev(zero);
+    display.mins.setPrev(zero);
+    display.secs.setPrev(zero);
+
+    display.days.setCurr(zero);
+    display.hours.setCurr(zero);
+    display.mins.setCurr(zero);
+    display.secs.setCurr(zero);
+
+    // For simple timer
+    days.innerText = zero;
+    hours.innerText = zero;
+    mins.innerText = zero;
+    secs.innerText = zero;
+    indexOfDigits.forEach((element) => {
+        element.classList.remove("before");
+        element.classList.remove("active");
+    });
 }
 
 // Lead zero
