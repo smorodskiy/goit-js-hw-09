@@ -183,7 +183,7 @@ const options = {
         checkDate(selectedDate);
     },
     onOpen() {
-        removeClasses();
+        // removeClasses();
     },
 };
 
@@ -259,18 +259,13 @@ function getIndexChangedDigits(dataCurr, dataPrev) {
 
 // Rolling effect on start
 function rolling(dataCurr) {
-    name(removeClasses());
-    function name(callback) {
 
-        callback();
-        // Adding all of elements anim classes
-        for (let i = 0; i <= indexOfDigits.length - 2; i += 2) {
-            indexOfDigits[i + 1].classList.add("before");
-            indexOfDigits[i].classList.add("active");
-        }
+
+    // Adding all of elements anim classes
+    for (let i = 0; i <= indexOfDigits.length - 2; i += 2) {
+        indexOfDigits[i + 1].classList.add("before");
+        indexOfDigits[i].classList.add("active");
     }
-
-    
 
     // Background numbers
     display.days.setPrev(dataCurr.days.toString());
