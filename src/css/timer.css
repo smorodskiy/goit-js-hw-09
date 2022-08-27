@@ -1,0 +1,384 @@
+/* Main */
+html {
+    min-height: 100%;
+}
+
+body {
+    height: 100vh;
+    font: normal 11px "Helvetica Neue", Helvetica, sans-serif;
+    user-select: none;
+    /* text-align: center; */
+
+    color: #888;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    background: rgb(150, 150, 150);
+    background: -moz-radial-gradient(
+        center,
+        ellipse cover,
+        rgba(150, 150, 150, 1) 0%,
+        rgba(89, 89, 89, 1) 100%
+    );
+    background: -webkit-gradient(
+        radial,
+        center center,
+        0px,
+        center center,
+        100%,
+        color-stop(0%, rgba(150, 150, 150, 1)),
+        color-stop(100%, rgba(89, 89, 89, 1))
+    );
+    background: -webkit-radial-gradient(
+        center,
+        ellipse cover,
+        rgba(150, 150, 150, 1) 0%,
+        rgba(89, 89, 89, 1) 100%
+    );
+    background: -o-radial-gradient(
+        center,
+        ellipse cover,
+        rgba(150, 150, 150, 1) 0%,
+        rgba(89, 89, 89, 1) 100%
+    );
+    background: -ms-radial-gradient(
+        center,
+        ellipse cover,
+        rgba(150, 150, 150, 1) 0%,
+        rgba(89, 89, 89, 1) 100%
+    );
+    background: radial-gradient(
+        ellipse at center,
+        rgba(150, 150, 150, 1) 0%,
+        rgba(89, 89, 89, 1) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#969696', endColorstr = '#595959', GradientType = 1);
+}
+
+.container {
+    text-align: center;
+}
+
+.timer-container {
+    display: flex;
+    justify-content: center;
+    text-align: left;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: 20px;
+    color: #fff;
+}
+
+.modern-timer {
+    display: flex;
+    justify-content: center;
+}
+
+.modern-timer > .days-s {
+    margin-right: 20px;
+}
+.modern-timer > .hours-s {
+    margin-right: 20px;
+}
+.modern-timer > .mins-s {
+    margin-right: 20px;
+}
+
+/* Skeleton */
+div.flip {
+    position: relative;
+    /* float: left; */
+    margin: 5px;
+    width: 60px;
+    height: 90px;
+    font-size: 80px;
+    font-weight: bold;
+    line-height: 87px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+div.flip .num {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* div.flip .num:first-child {
+    z-index: 2;
+} */
+
+div.flip .num {
+    display: block;
+    height: 100%;
+    perspective: 200px;
+}
+
+div.flip .num div {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    overflow: hidden;
+}
+
+div.flip .num div .shadow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+div.flip .num div.up {
+    transform-origin: 50% 100%;
+    top: 0;
+}
+
+div.flip .num div.up:after {
+    content: "";
+    position: absolute;
+    top: 44px;
+    left: 0;
+    z-index: 5;
+    width: 100%;
+    height: 3px;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+div.flip .num div.down {
+    transform-origin: 50% 0%;
+    bottom: 0;
+}
+
+div.flip .num div div.inn {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 200%;
+    color: #ccc;
+    text-shadow: 0 1px 2px #000;
+    text-align: center;
+    background-color: #333;
+    border-radius: 6px;
+}
+
+div.flip .num div.up div.inn {
+    top: 0;
+}
+
+div.flip .num div.down div.inn {
+    bottom: 0;
+}
+
+/* PLAY */
+
+body div .num.before {
+    z-index: 3;
+}
+
+body div .num.active {
+    animation: asd 0.5s 0.5s linear both;
+    z-index: 2;
+}
+
+@keyframes asd {
+    0% {
+        z-index: 2;
+    }
+    5% {
+        z-index: 4;
+    }
+    100% {
+        z-index: 4;
+    }
+}
+
+body div .num.active .down {
+    z-index: 2;
+    animation: turn 0.5s 0.5s linear both;
+}
+
+@keyframes turn {
+    0% {
+        transform: rotateX(90deg);
+    }
+    100% {
+        transform: rotateX(0deg);
+    }
+}
+
+body div .num.before .up {
+    z-index: 2;
+    animation: turn2 0.5s linear both;
+}
+
+@keyframes turn2 {
+    0% {
+        transform: rotateX(0deg);
+    }
+    100% {
+        transform: rotateX(-90deg);
+    }
+}
+
+/* SHADOW */
+
+body div .num.before .up .shadow {
+    background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0%, rgba(0, 0, 0, 0.1)),
+        color-stop(100%, rgba(0, 0, 0, 1))
+    );
+    background: linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: -o-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: -ms-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    animation: show 0.5s linear both;
+}
+
+body div .num.active .up .shadow {
+    background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0%, rgba(0, 0, 0, 0.1)),
+        color-stop(100%, rgba(0, 0, 0, 1))
+    );
+    background: linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: -o-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: -ms-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+    animation: hide 0.5s 0.3s linear both;
+}
+
+/*DOWN*/
+
+body div .num.before .down .shadow {
+    background: -moz-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0%, rgba(0, 0, 0, 1)),
+        color-stop(100%, rgba(0, 0, 0, 0.1))
+    );
+    background: linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: -o-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: -ms-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    animation: show 0.5s linear both;
+}
+
+body div .num.active .down .shadow {
+    background: -moz-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0%, rgba(0, 0, 0, 1)),
+        color-stop(100%, rgba(0, 0, 0, 0.1))
+    );
+    background: linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: -o-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: -ms-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    animation: hide 0.5s 0.3s linear both;
+}
+
+@keyframes show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes hide {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* BUTTON */
+
+.button-30 {
+    align-items: center;
+    appearance: none;
+    background-color: #fcfcfd;
+    border-radius: 4px;
+    border-width: 0;
+    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+        #d6d6e7 0 -3px 0 inset;
+    box-sizing: border-box;
+    color: #36395a;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: "JetBrains Mono", monospace;
+    height: 48px;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition: box-shadow 0.15s, transform 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow, transform;
+    font-size: 18px;
+}
+
+.button-30:focus {
+    box-shadow: #d6d6e7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px,
+        rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+}
+
+.button-30:hover {
+    box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+        #d6d6e7 0 -3px 0 inset;
+    transform: translateY(-2px);
+}
+
+.button-30:active {
+    box-shadow: #d6d6e7 0 3px 7px inset;
+    transform: translateY(2px);
+}
+
+.button-30:disabled {
+    box-shadow: #b4b4bb 0 3px 7px inset;
+    transform: translateY(0px);
+}
+
+/* INPUT */
+.input-date {
+    color: rgb(36, 35, 42);
+    font: 18px Helvetica Neue, Helvetica, sans-serif;
+    /* line-height: 20px; */
+    min-height: 52px;
+    border-radius: 4px;
+    padding: 8px 16px;
+    border: 2px solid transparent;
+    box-shadow: rgb(0 0 0 / 12%) 0px 1px 3px, rgb(0 0 0 / 24%) 0px 1px 2px;
+    background: rgb(251, 251, 251);
+    transition: all 0.1s ease 0s;
+}
+
+/* .input-date:focus {
+    border: 2px solid rgb(124, 138, 255);
+} */
