@@ -10,8 +10,8 @@ const mins = document.querySelector("[data-minutes]");
 const secs = document.querySelector("[data-seconds]");
 const startBtn = document.querySelector("[data-start]");
 
-const displayTest = document.querySelectorAll(".inn");
-console.log(displayTest);
+// const displayTest = document.querySelectorAll(".inn");
+// console.log(displayTest);
 
 const display = {
     // DAYS
@@ -31,25 +31,25 @@ const display = {
         },
 
         prevFirstDigit: {
-            root: document.querySelector(".days-f .num.prev"),
+            //root: document.querySelector(".days-f .num.prev"),
             up: document.querySelector(".days-f .num.prev .up .inn"),
             down: document.querySelector(".days-f .num.prev .down .inn"),
         },
 
         currFirstDigit: {
-            root: document.querySelector(".days-f .num.curr"),
+            //root: document.querySelector(".days-f .num.curr"),
             up: document.querySelector(".days-f .num.curr .up .inn"),
             down: document.querySelector(".days-f .num.curr .down .inn"),
         },
 
         prevSecondDigit: {
-            root: document.querySelector(".days-s .num.prev"),
+            //root: document.querySelector(".days-s .num.prev"),
             up: document.querySelector(".days-s .num.prev .up .inn"),
             down: document.querySelector(".days-s .num.prev .down .inn"),
         },
 
         currSecondDigit: {
-            root: document.querySelector(".days-s .num.curr"),
+            //root: document.querySelector(".days-s .num.curr"),
             up: document.querySelector(".days-s .num.curr .up .inn"),
             down: document.querySelector(".days-s .num.curr .down .inn"),
         },
@@ -72,25 +72,25 @@ const display = {
         },
 
         prevFirstDigit: {
-            root: document.querySelector(".hours-f .num.prev"),
+            //root: document.querySelector(".hours-f .num.prev"),
             up: document.querySelector(".hours-f .num.prev .up .inn"),
             down: document.querySelector(".hours-f .num.prev .down .inn"),
         },
 
         currFirstDigit: {
-            root: document.querySelector(".hours-f .num.curr"),
+            //root: document.querySelector(".hours-f .num.curr"),
             up: document.querySelector(".hours-f .num.curr .up .inn"),
             down: document.querySelector(".hours-f .num.curr .down .inn"),
         },
 
         prevSecondDigit: {
-            root: document.querySelector(".hours-s .num.prev"),
+            //root: document.querySelector(".hours-s .num.prev"),
             up: document.querySelector(".hours-s .num.prev .up .inn"),
             down: document.querySelector(".hours-s .num.prev .down .inn"),
         },
 
         currSecondDigit: {
-            root: document.querySelector(".hours-s .num.curr"),
+            //root: document.querySelector(".hours-s .num.curr"),
             up: document.querySelector(".hours-s .num.curr .up .inn"),
             down: document.querySelector(".hours-s .num.curr .down .inn"),
         },
@@ -113,25 +113,25 @@ const display = {
         },
 
         prevFirstDigit: {
-            root: document.querySelector(".mins-f .num.prev"),
+            //root: document.querySelector(".mins-f .num.prev"),
             up: document.querySelector(".mins-f .num.prev .up .inn"),
             down: document.querySelector(".mins-f .num.prev .down .inn"),
         },
 
         currFirstDigit: {
-            root: document.querySelector(".mins-f .num.curr"),
+            //root: document.querySelector(".mins-f .num.curr"),
             up: document.querySelector(".mins-f .num.curr .up .inn"),
             down: document.querySelector(".mins-f .num.curr .down .inn"),
         },
 
         prevSecondDigit: {
-            root: document.querySelector(".mins-s .num.prev"),
+            //root: document.querySelector(".mins-s .num.prev"),
             up: document.querySelector(".mins-s .num.prev .up .inn"),
             down: document.querySelector(".mins-s .num.prev .down .inn"),
         },
 
         currSecondDigit: {
-            root: document.querySelector(".mins-s .num.curr"),
+            //root: document.querySelector(".mins-s .num.curr"),
             up: document.querySelector(".mins-s .num.curr .up .inn"),
             down: document.querySelector(".mins-s .num.curr .down .inn"),
         },
@@ -154,25 +154,25 @@ const display = {
         },
         // FIRST DIGIT
         prevFirstDigit: {
-            root: document.querySelector(".secs-f .num.prev"),
+            //root: document.querySelector(".secs-f .num.prev"),
             up: document.querySelector(".secs-f .num.prev .up .inn"),
             down: document.querySelector(".secs-f .num.prev .down .inn"),
         },
 
         currFirstDigit: {
-            root: document.querySelector(".secs-f .num.curr"),
+            //root: document.querySelector(".secs-f .num.curr"),
             up: document.querySelector(".secs-f .num.curr .up .inn"),
             down: document.querySelector(".secs-f .num.curr .down .inn"),
         },
         // SECOND DIGIT
         prevSecondDigit: {
-            root: document.querySelector(".secs-s .num.prev"),
+            //root: document.querySelector(".secs-s .num.prev"),
             up: document.querySelector(".secs-s .num.prev .up .inn"),
             down: document.querySelector(".secs-s .num.prev .down .inn"),
         },
 
         currSecondDigit: {
-            root: document.querySelector(".secs-s .num.curr"),
+            //root: document.querySelector(".secs-s .num.curr"),
             up: document.querySelector(".secs-s .num.curr .up .inn"),
             down: document.querySelector(".secs-s .num.curr .down .inn"),
         },
@@ -198,10 +198,23 @@ const options = {
         selectedDate = selectedDates[0];
         checkDate(selectedDate);
     },
+    onOpen() {
+        removeClasses();
+    },
 };
 
+// Remove all anim classes
+function removeClasses() {
+    indexOfDigits.forEach((element) => {
+        element.classList.remove("before");
+        element.classList.remove("active");
+    });
+}
+
+// Init calendar
 flatpickr(input, options);
 
+// Disable button on start
 startBtn.disabled = true;
 
 // Event on click's button
@@ -233,6 +246,11 @@ function checkDate(selectedDate) {
     }
 
     startBtn.disabled = false;
+
+    // obj {days, hours, mins, secs}
+    const dataCurr = convertMs(timeLeft);
+    rolling(dataCurr);
+
     return true;
 }
 
@@ -241,56 +259,59 @@ function setTimer() {
     console.log("Timer has started");
     startBtn.disabled = true;
     if (timerID) timerOff(timerID);
-    timerID = setInterval(renderTime, 1000);
+    timerID = setInterval(render, 1000);
+}
+
+function getIndexChangedDigits(dataCurr, dataPrev) {
+    // Array with index of changed digits
+    const indexChangedDigits = [];
+    [...dataCurr].forEach((item, index) => {
+        if ([...dataPrev][index] != item) indexChangedDigits.push(index);
+    });
+
+    return indexChangedDigits;
+}
+
+function rolling(dataCurr) {
+    // Visible numbers
+    // display.days.setCurr("00");
+    // display.hours.setCurr("00");
+    // display.minutes.setCurr("00");
+    // display.seconds.setCurr("00");
+
+    // Background numbers
+    display.days.setPrev(dataCurr.days.toString());
+    display.hours.setPrev(dataCurr.hours.toString());
+    display.mins.setPrev(dataCurr.minutes.toString());
+    display.secs.setPrev(dataCurr.seconds.toString());
+
+    for (let i = 0; i <= indexOfDigits.length - 2; i += 2) {
+        indexOfDigits[i + 1].classList.add("before");
+        indexOfDigits[i].classList.add("active");
+    }
 }
 
 // Start timer
-function renderTime() {
+function render() {
     // obj {days, hours, mins, secs}
-    const data = convertMs(timeLeft);
-    const dataMinusOne = convertMs(timeLeft - 1);
+    const dataCurr = convertMs(timeLeft);
+    const dataPrev = convertMs(timeLeft - 1);
+    const dataCurrString = dataCurr.days + dataCurr.hours + dataCurr.minutes + dataCurr.seconds;
+    const dataPrevString = dataPrev.days + dataPrev.hours + dataPrev.minutes + dataPrev.seconds;
 
-    days.innerText = data.days;
-    hours.innerText = data.hours;
-    mins.innerText = data.minutes;
-    secs.innerText = data.seconds;
+    const indexChangedDigits = getIndexChangedDigits(dataCurrString, dataPrevString);
+    // console.log(indexChangedDigits);
 
-    // Visible numbers
-    display.days.setCurr(data.days.toString());
-    display.hours.setCurr(data.hours.toString());
-    display.mins.setCurr(data.minutes.toString());
-    display.secs.setCurr(data.seconds.toString());
+    days.innerText = dataCurr.days;
+    hours.innerText = dataCurr.hours;
+    mins.innerText = dataCurr.minutes;
+    secs.innerText = dataCurr.seconds;
 
-    // Background numbers
-    display.days.setPrev(dataMinusOne.days.toString());
-    display.hours.setPrev(dataMinusOne.hours.toString());
-    display.mins.setPrev(dataMinusOne.minutes.toString());
-    display.secs.setPrev(dataMinusOne.seconds.toString());
-
-    // // Visible numbers
-    // display.days.setPrev(data.days.toString());
-    // display.hours.setPrev(data.hours.toString());
-    // display.mins.setPrev(data.minutes.toString());
-    // display.secs.setPrev(data.seconds.toString());
-
-    // // Background numbers
-    // display.days.setCurr(dataMinusOne.days.toString());
-    // display.hours.setCurr(dataMinusOne.hours.toString());
-    // display.mins.setCurr(dataMinusOne.minutes.toString());
-    // display.secs.setCurr(dataMinusOne.seconds.toString());
-
-    const arrVisibleNums = data.days + data.hours + data.minutes + data.seconds;
-    const arrBgNums =
-        dataMinusOne.days + dataMinusOne.hours + dataMinusOne.minutes + dataMinusOne.seconds;
-
-    // Array with index of changed digits
-    const indexDigits = [];
-    [...arrVisibleNums].forEach((item, index) => {
-        if ([...arrBgNums][index] != item) indexDigits.push(index);
-    });
+    // Set values to display
+    setDisplay(indexChangedDigits, dataCurrString, dataPrevString);
 
     // Switch classes for animations
-    toggleClasses(indexDigits);
+    toggleClasses(indexChangedDigits);
 
     // Reduce time
     timeLeft--;
@@ -299,24 +320,33 @@ function renderTime() {
     isTimeCome(timeLeft);
 }
 
-// Toggle classes for digits(Animation)
-function toggleClasses(indexDigits) {
-    indexDigits.forEach((digit) => {
-        const isBefore = indexOfDigits[digit * 2].classList.contains("before");
-        const isActive = indexOfDigits[digit * 2].classList.contains("active");
+// Set numbers for changed displays
+function setDisplay(indexChangedDigits, dataCurrString, dataPrevString) {
+    indexChangedDigits.forEach((digit) => {
+        // Search "before" class
+        const beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".before .up .inn");
+        const beforeDown =
+            indexOfDigits[digit * 2].parentElement.querySelector(".before .down .inn");
+        const activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".active .up .inn");
+        const activeDown =
+            indexOfDigits[digit * 2].parentElement.querySelector(".active .down .inn");
 
-        if (!isActive && !isBefore) {
-            indexOfDigits[digit * 2].classList.add("before");
-            indexOfDigits[digit * 2 + 1].classList.add("active");
-        } else if (isBefore) {
-            indexOfDigits[digit * 2].classList.remove("before");
-            indexOfDigits[digit * 2 + 1].classList.replace("active", "before");
-            indexOfDigits[digit * 2].classList.add("active");
-        } else {
-            indexOfDigits[digit * 2 + 1].classList.remove("before");
-            indexOfDigits[digit * 2].classList.replace("active", "before");
-            indexOfDigits[digit * 2 + 1].classList.add("active");
-        }
+        beforeUp.innerText = dataPrevString[digit];
+        beforeDown.innerText = dataPrevString[digit];
+        activeUp.innerText = dataCurrString[digit];
+        activeDown.innerText = dataCurrString[digit];
+    });
+}
+
+// Toggle classes for digits(Animation)
+function toggleClasses(indexChangedDigits) {
+    indexChangedDigits.forEach((digit) => {
+        const elemWithBefore = indexOfDigits[digit * 2].parentElement.querySelector(".before");
+        const elemWithActive = indexOfDigits[digit * 2].parentElement.querySelector(".active");
+        
+        elemWithBefore.classList.remove("before");
+        elemWithActive.classList.replace("active", "before");
+        elemWithBefore.classList.add("active");        
     });
 }
 
