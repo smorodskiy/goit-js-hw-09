@@ -1,6 +1,5 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import { indexOf } from "lodash";
 import Notiflix from "notiflix";
 
 const input = document.getElementById("datetime-picker");
@@ -164,7 +163,7 @@ const display = {
 };
 
 const indexOfDigits = document.querySelectorAll(".num.prev, .num.curr");
-console.log(indexOfDigits);
+// console.log(indexOfDigits);
 
 // Global vars
 let timerID;
@@ -183,12 +182,27 @@ const options = {
         checkDate(selectedDate);
     },
     onOpen() {
-        // removeClasses();
+        resetDigits();
     },
 };
 
 // Remove all anim classes
-function removeClasses() {
+function resetDigits() {
+    const zero = "00";
+    display.days.setPrev(zero);
+    display.hours.setPrev(zero);
+    display.mins.setPrev(zero);
+    display.secs.setPrev(zero);
+    display.days.setCurr(zero);
+    display.hours.setCurr(zero);
+    display.mins.setCurr(zero);
+    display.secs.setCurr(zero);
+
+    // For simple timer
+    days.innerText = zero;
+    hours.innerText = zero;
+    mins.innerText = zero;
+    secs.innerText = zero;    
     indexOfDigits.forEach((element) => {
         element.classList.remove("before");
         element.classList.remove("active");
@@ -259,8 +273,6 @@ function getIndexChangedDigits(dataCurr, dataPrev) {
 
 // Rolling effect on start
 function rolling(dataCurr) {
-
-
     // Adding all of elements anim classes
     for (let i = 0; i <= indexOfDigits.length - 2; i += 2) {
         indexOfDigits[i + 1].classList.add("before");
@@ -336,25 +348,25 @@ function toggleClasses(indexChangedDigits) {
 
 function timerOff(id) {
     clearInterval(id);
-    const zero = "00";
-    days.innerText = zero;
-    hours.innerText = zero;
-    mins.innerText = zero;
-    secs.innerText = zero;
 }
 
 // Checking time is out or no
 function isTimeCome(sec) {
     if (sec < 0) {
         timerOff(timerID);
+        toggleClasses([0,1,2,3,4,5,6]);
+        // resetDigits();        
+        startBtn.disabled = false;
         Notiflix.Notify.success("Time has come!");
     }
 }
 
+// Lead zero
 function addLeadingZero(value) {
     return value.toString().padStart(2, "0");
 }
 
+// Convert ms to obj
 function convertMs(ms) {
     // Number of milliseconds per unit of time
     const second = 1;
