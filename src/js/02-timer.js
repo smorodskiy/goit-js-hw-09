@@ -12,191 +12,9 @@ const indexOfDigits = document.querySelectorAll(".num.prev, .num.curr");
 
 // Global vars
 let timerID;
-let timeLeft;
+let timeLeft = 0;
+let timeLeftPrev = 0;
 let selectedDate;
-
-const display = {
-    // DAYS
-    days: {
-        setCurr(nums) {
-            this.currFirstDigit.up.innerText = [...nums][0];
-            this.currSecondDigit.up.innerText = [...nums][1];
-            this.currFirstDigit.down.innerText = [...nums][0];
-            this.currSecondDigit.down.innerText = [...nums][1];
-        },
-
-        setPrev(nums) {
-            this.prevFirstDigit.up.innerText = [...nums][0];
-            this.prevSecondDigit.up.innerText = [...nums][1];
-            this.prevFirstDigit.down.innerText = [...nums][0];
-            this.prevSecondDigit.down.innerText = [...nums][1];
-        },
-
-        getCurr() {
-            return this.currFirstDigit.up.innerText + this.currSecondDigit.up.innerText;
-        },
-
-        getPrev() {
-            return this.prevFirstDigit.up.innerText + this.prevSecondDigit.up.innerText;
-        },
-
-        prevFirstDigit: {
-            up: document.querySelector(".days-f .num.prev .up .inn"),
-            down: document.querySelector(".days-f .num.prev .down .inn"),
-        },
-
-        currFirstDigit: {
-            up: document.querySelector(".days-f .num.curr .up .inn"),
-            down: document.querySelector(".days-f .num.curr .down .inn"),
-        },
-
-        prevSecondDigit: {
-            up: document.querySelector(".days-s .num.prev .up .inn"),
-            down: document.querySelector(".days-s .num.prev .down .inn"),
-        },
-
-        currSecondDigit: {
-            up: document.querySelector(".days-s .num.curr .up .inn"),
-            down: document.querySelector(".days-s .num.curr .down .inn"),
-        },
-    },
-
-    // HOURS
-    hours: {
-        setCurr(nums) {
-            this.currFirstDigit.up.innerText = [...nums][0];
-            this.currSecondDigit.up.innerText = [...nums][1];
-            this.currFirstDigit.down.innerText = [...nums][0];
-            this.currSecondDigit.down.innerText = [...nums][1];
-        },
-
-        setPrev(nums) {
-            this.prevFirstDigit.up.innerText = [...nums][0];
-            this.prevSecondDigit.up.innerText = [...nums][1];
-            this.prevFirstDigit.down.innerText = [...nums][0];
-            this.prevSecondDigit.down.innerText = [...nums][1];
-        },
-
-        getCurr() {
-            return this.currFirstDigit.up.innerText + this.currSecondDigit.up.innerText;
-        },
-
-        getPrev() {
-            return this.prevFirstDigit.up.innerText + this.prevSecondDigit.up.innerText;
-        },
-
-        prevFirstDigit: {
-            up: document.querySelector(".hours-f .num.prev .up .inn"),
-            down: document.querySelector(".hours-f .num.prev .down .inn"),
-        },
-
-        currFirstDigit: {
-            up: document.querySelector(".hours-f .num.curr .up .inn"),
-            down: document.querySelector(".hours-f .num.curr .down .inn"),
-        },
-
-        prevSecondDigit: {
-            up: document.querySelector(".hours-s .num.prev .up .inn"),
-            down: document.querySelector(".hours-s .num.prev .down .inn"),
-        },
-
-        currSecondDigit: {
-            up: document.querySelector(".hours-s .num.curr .up .inn"),
-            down: document.querySelector(".hours-s .num.curr .down .inn"),
-        },
-    },
-
-    // MINUTES
-    mins: {
-        setCurr(nums) {
-            this.currFirstDigit.up.innerText = [...nums][0];
-            this.currSecondDigit.up.innerText = [...nums][1];
-            this.currFirstDigit.down.innerText = [...nums][0];
-            this.currSecondDigit.down.innerText = [...nums][1];
-        },
-
-        setPrev(nums) {
-            this.prevFirstDigit.up.innerText = [...nums][0];
-            this.prevSecondDigit.up.innerText = [...nums][1];
-            this.prevFirstDigit.down.innerText = [...nums][0];
-            this.prevSecondDigit.down.innerText = [...nums][1];
-        },
-
-        getCurr() {
-            return this.currFirstDigit.up.innerText + this.currSecondDigit.up.innerText;
-        },
-
-        getPrev() {
-            return this.prevFirstDigit.up.innerText + this.prevSecondDigit.up.innerText;
-        },
-
-        prevFirstDigit: {
-            up: document.querySelector(".mins-f .num.prev .up .inn"),
-            down: document.querySelector(".mins-f .num.prev .down .inn"),
-        },
-
-        currFirstDigit: {
-            up: document.querySelector(".mins-f .num.curr .up .inn"),
-            down: document.querySelector(".mins-f .num.curr .down .inn"),
-        },
-
-        prevSecondDigit: {
-            up: document.querySelector(".mins-s .num.prev .up .inn"),
-            down: document.querySelector(".mins-s .num.prev .down .inn"),
-        },
-
-        currSecondDigit: {
-            up: document.querySelector(".mins-s .num.curr .up .inn"),
-            down: document.querySelector(".mins-s .num.curr .down .inn"),
-        },
-    },
-
-    // SECONDS
-    secs: {
-        setCurr(nums) {
-            this.currFirstDigit.up.innerText = [...nums][0];
-            this.currSecondDigit.up.innerText = [...nums][1];
-            this.currFirstDigit.down.innerText = [...nums][0];
-            this.currSecondDigit.down.innerText = [...nums][1];
-        },
-
-        setPrev(nums) {
-            this.prevFirstDigit.up.innerText = [...nums][0];
-            this.prevSecondDigit.up.innerText = [...nums][1];
-            this.prevFirstDigit.down.innerText = [...nums][0];
-            this.prevSecondDigit.down.innerText = [...nums][1];
-        },
-
-        getCurr() {
-            return this.currFirstDigit.up.innerText + this.currSecondDigit.up.innerText;
-        },
-
-        getPrev() {
-            return this.prevFirstDigit.up.innerText + this.prevSecondDigit.up.innerText;
-        },
-
-        // FIRST DIGIT
-        prevFirstDigit: {
-            up: document.querySelector(".secs-f .num.prev .up .inn"),
-            down: document.querySelector(".secs-f .num.prev .down .inn"),
-        },
-
-        currFirstDigit: {
-            up: document.querySelector(".secs-f .num.curr .up .inn"),
-            down: document.querySelector(".secs-f .num.curr .down .inn"),
-        },
-        // SECOND DIGIT
-        prevSecondDigit: {
-            up: document.querySelector(".secs-s .num.prev .up .inn"),
-            down: document.querySelector(".secs-s .num.prev .down .inn"),
-        },
-
-        currSecondDigit: {
-            up: document.querySelector(".secs-s .num.curr .up .inn"),
-            down: document.querySelector(".secs-s .num.curr .down .inn"),
-        },
-    },
-};
 
 // Options for Calendar
 const options = {
@@ -261,10 +79,10 @@ function setTimer() {
     // Remove timer if already set
     if (timerID) timerOff(timerID);
 
-    // obj {days, hours, mins, secs}
-    const dataCurr = convertMs(timeLeft);
-
-    firstTimeSet(dataCurr);
+    // First rendering(cuz only changed numbers are updated in the timer)
+    render({
+        firstRun: true,
+    });
 
     // Starting timer and rendering display
     timerID = setInterval(render, 1000);
@@ -280,29 +98,30 @@ function getIndexChangedDigits(arrCurr, arrPrev) {
     return indexChangedDigits;
 }
 
-// First seting display's nums and rolling it
-function firstTimeSet(objDate) {
-    const dataCurrString = objDate.days + objDate.hours + objDate.minutes + objDate.seconds;
-    const dataPrevString =
-        display.days.getPrev() +
-        display.hours.getPrev() +
-        display.mins.getPrev() +
-        display.secs.getPrev();
-
-    // Indexes of changed digits
-    const indexChangedDigits = getIndexChangedDigits(dataCurrString, dataPrevString);
-    setDisplay(indexChangedDigits, dataPrevString, dataCurrString);
-    toggleClasses(indexChangedDigits);
-}
-
 // Start timer
-function render() {
-    // obj {days, hours, mins, secs}
-    const dataCurr = convertMs(timeLeft - 1);
-    const dataPrev = convertMs(timeLeft - 2);
+function render(param) {
+    let dataCurr;
+    let dataPrev;
+    
+    // If it's the timer first starting
+    if (param != undefined && param.firstRun == true) {
+        dataCurr = convertMs(timeLeftPrev);
+        dataPrev = convertMs(timeLeft);
+    } else {
+        // obj {days, hours, mins, secs}
+        dataCurr = convertMs(timeLeft - 1);
+        dataPrev = convertMs(timeLeft - 2);
+    }
 
-    const dataCurrString = dataCurr.days + dataCurr.hours + dataCurr.minutes + dataCurr.seconds;
-    const dataPrevString = dataPrev.days + dataPrev.hours + dataPrev.minutes + dataPrev.seconds;
+    // Combine time to one strings
+    let dataCurrString = dataCurr.days + dataCurr.hours + dataCurr.minutes + dataCurr.seconds;
+    let dataPrevString = dataPrev.days + dataPrev.hours + dataPrev.minutes + dataPrev.seconds;
+
+    // If more then 99 days
+    if (dataCurrString.length > 8 || dataPrevString.length > 8) {
+        dataCurrString = dataCurrString.slice(-8);
+        dataPrevString = dataPrevString.slice(-8);
+    }
 
     // Indexes of changed digits
     const indexChangedDigits = getIndexChangedDigits(dataCurrString, dataPrevString);
@@ -322,7 +141,10 @@ function render() {
     // Reduce time
     timeLeft--;
 
-    // Check time
+    // Save time for next timer starting
+    timeLeftPrev = timeLeft;
+
+    // Checking time
     isTimeCome(timeLeft);
 }
 
@@ -374,6 +196,7 @@ function toggleClasses(indexChangedDigits) {
     });
 }
 
+// Remove timer
 function timerOff(id) {
     clearInterval(id);
 }
