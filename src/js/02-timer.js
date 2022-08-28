@@ -8,9 +8,12 @@ const hours = document.querySelector("[data-hours]");
 const mins = document.querySelector("[data-minutes]");
 const secs = document.querySelector("[data-seconds]");
 const startBtn = document.querySelector("[data-start]");
+const indexOfDigits = document.querySelectorAll(".num.prev, .num.curr");
 
-// const displayTest = document.querySelectorAll(".inn");
-// console.log(displayTest);
+// Global vars
+let timerID;
+let timeLeft;
+let selectedDate;
 
 const display = {
     // DAYS
@@ -27,6 +30,14 @@ const display = {
             this.prevSecondDigit.up.innerText = [...nums][1];
             this.prevFirstDigit.down.innerText = [...nums][0];
             this.prevSecondDigit.down.innerText = [...nums][1];
+        },
+
+        getCurr() {
+            return this.currFirstDigit.up.innerText + this.currSecondDigit.up.innerText;
+        },
+
+        getPrev() {
+            return this.prevFirstDigit.up.innerText + this.prevSecondDigit.up.innerText;
         },
 
         prevFirstDigit: {
@@ -66,6 +77,14 @@ const display = {
             this.prevSecondDigit.down.innerText = [...nums][1];
         },
 
+        getCurr() {
+            return this.currFirstDigit.up.innerText + this.currSecondDigit.up.innerText;
+        },
+
+        getPrev() {
+            return this.prevFirstDigit.up.innerText + this.prevSecondDigit.up.innerText;
+        },
+
         prevFirstDigit: {
             up: document.querySelector(".hours-f .num.prev .up .inn"),
             down: document.querySelector(".hours-f .num.prev .down .inn"),
@@ -101,6 +120,14 @@ const display = {
             this.prevSecondDigit.up.innerText = [...nums][1];
             this.prevFirstDigit.down.innerText = [...nums][0];
             this.prevSecondDigit.down.innerText = [...nums][1];
+        },
+
+        getCurr() {
+            return this.currFirstDigit.up.innerText + this.currSecondDigit.up.innerText;
+        },
+
+        getPrev() {
+            return this.prevFirstDigit.up.innerText + this.prevSecondDigit.up.innerText;
         },
 
         prevFirstDigit: {
@@ -139,6 +166,15 @@ const display = {
             this.prevFirstDigit.down.innerText = [...nums][0];
             this.prevSecondDigit.down.innerText = [...nums][1];
         },
+
+        getCurr() {
+            return this.currFirstDigit.up.innerText + this.currSecondDigit.up.innerText;
+        },
+
+        getPrev() {
+            return this.prevFirstDigit.up.innerText + this.prevSecondDigit.up.innerText;
+        },
+
         // FIRST DIGIT
         prevFirstDigit: {
             up: document.querySelector(".secs-f .num.prev .up .inn"),
@@ -162,14 +198,6 @@ const display = {
     },
 };
 
-const indexOfDigits = document.querySelectorAll(".num.prev, .num.curr");
-// console.log(indexOfDigits);
-
-// Global vars
-let timerID;
-let timeLeft;
-let selectedDate;
-
 // Options for Calendar
 const options = {
     enableTime: true,
@@ -180,9 +208,6 @@ const options = {
     onClose(selectedDates) {
         selectedDate = selectedDates[0];
         checkDate(selectedDate);
-    },
-    onOpen() {
-        resetDigits();
     },
 };
 
@@ -197,8 +222,9 @@ startBtn.addEventListener("click", () => {
     if (checkDate(selectedDate)) setTimer();
 });
 
-// Check date
+// Check date is correct
 function checkDate(selectedDate) {
+    // Remove timer if already set
     if (timerID) timerOff(timerID);
 
     // Return if date is not selected
@@ -208,8 +234,9 @@ function checkDate(selectedDate) {
         return false;
     }
 
-    // Current date
+    // Get current date
     const today = new Date();
+
     // How much time you have
     timeLeft = Math.trunc((selectedDate - today) / 1000);
 
@@ -222,10 +249,7 @@ function checkDate(selectedDate) {
 
     startBtn.disabled = false;
 
-    // obj {days, hours, mins, secs}
-    const dataCurr = convertMs(timeLeft);
-    rolling(dataCurr);
-
+    // if all correct return true
     return true;
 }
 
@@ -233,52 +257,55 @@ function checkDate(selectedDate) {
 function setTimer() {
     console.log("Timer has started");
     startBtn.disabled = true;
+
+    // Remove timer if already set
     if (timerID) timerOff(timerID);
+
+    // obj {days, hours, mins, secs}
+    const dataCurr = convertMs(timeLeft);
+
+    firstTimeSet(dataCurr);
+
+    // Starting timer and rendering display
     timerID = setInterval(render, 1000);
 }
 
-// Get only changed digits
-function getIndexChangedDigits(dataCurr, dataPrev) {
-    // Array with index of changed digits
+// Get indices only changed digits
+function getIndexChangedDigits(arrCurr, arrPrev) {
+    // Array with indices of changed digits
     const indexChangedDigits = [];
-    [...dataCurr].forEach((item, index) => {
-        if ([...dataPrev][index] != item) indexChangedDigits.push(index);
+    [...arrCurr].forEach((item, index) => {
+        if ([...arrPrev][index] != item) indexChangedDigits.push(index);
     });
-
     return indexChangedDigits;
 }
 
-// Rolling effect on start
-function rolling(dataCurr) {
-    // Adding all of elements anim classes
-    for (let i = 0; i <= indexOfDigits.length - 2; i += 2) {
-        indexOfDigits[i + 1].classList.add("before");
-        indexOfDigits[i].classList.add("active");
-    }
+// First seting display's nums and rolling it
+function firstTimeSet(objDate) {
+    const dataCurrString = objDate.days + objDate.hours + objDate.minutes + objDate.seconds;
+    const dataPrevString =
+        display.days.getPrev() +
+        display.hours.getPrev() +
+        display.mins.getPrev() +
+        display.secs.getPrev();
 
-    // Background numbers
-    display.days.setPrev(dataCurr.days.toString());
-    display.hours.setPrev(dataCurr.hours.toString());
-    display.mins.setPrev(dataCurr.minutes.toString());
-    display.secs.setPrev(dataCurr.seconds.toString());
+    // Indexes of changed digits
+    const indexChangedDigits = getIndexChangedDigits(dataCurrString, dataPrevString);
+    setDisplay(indexChangedDigits, dataPrevString, dataCurrString);
+    toggleClasses(indexChangedDigits);
 }
 
 // Start timer
 function render() {
     // obj {days, hours, mins, secs}
-    const dataCurr = convertMs(timeLeft);
-    const dataPrev = convertMs(timeLeft - 1);
+    const dataCurr = convertMs(timeLeft - 1);
+    const dataPrev = convertMs(timeLeft - 2);
+
     const dataCurrString = dataCurr.days + dataCurr.hours + dataCurr.minutes + dataCurr.seconds;
     const dataPrevString = dataPrev.days + dataPrev.hours + dataPrev.minutes + dataPrev.seconds;
 
     // Indexes of changed digits
     const indexChangedDigits = getIndexChangedDigits(dataCurrString, dataPrevString);
-
-    // Simple counter
-    days.innerText = dataCurr.days;
-    hours.innerText = dataCurr.hours;
-    mins.innerText = dataCurr.minutes;
-    secs.innerText = dataCurr.seconds;
 
     // Set values to display
     setDisplay(indexChangedDigits, dataCurrString, dataPrevString);
@@ -286,9 +313,14 @@ function render() {
     // Switch classes for animations
     toggleClasses(indexChangedDigits);
 
+    // Simple counter
+    days.innerText = dataCurr.days;
+    hours.innerText = dataCurr.hours;
+    mins.innerText = dataCurr.minutes;
+    secs.innerText = dataCurr.seconds;
+
     // Reduce time
     timeLeft--;
-    if (timeLeft < 0) timeLeft = 0;
 
     // Check time
     isTimeCome(timeLeft);
@@ -298,13 +330,21 @@ function render() {
 function setDisplay(indexChangedDigits, dataCurrString, dataPrevString) {
     indexChangedDigits.forEach((digit) => {
         // Search "before" class
-        const beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".before .up .inn");
-        const beforeDown =
-            indexOfDigits[digit * 2].parentElement.querySelector(".before .down .inn");
+        let beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".before .up .inn");
+        let beforeDown = indexOfDigits[digit * 2].parentElement.querySelector(".before .down .inn");
         // Search "active" class
-        const activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".active .up .inn");
-        const activeDown =
-            indexOfDigits[digit * 2].parentElement.querySelector(".active .down .inn");
+        let activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".active .up .inn");
+        let activeDown = indexOfDigits[digit * 2].parentElement.querySelector(".active .down .inn");
+
+        // If anim classes doesn't exist
+        if (!beforeUp && !beforeDown && !activeUp && !activeDown) {
+            beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".num.prev .up .inn");
+            beforeDown =
+                indexOfDigits[digit * 2].parentElement.querySelector(".num.prev .down .inn");
+            activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".num.curr .up .inn");
+            activeDown =
+                indexOfDigits[digit * 2].parentElement.querySelector(".num.curr .down .inn");
+        }
 
         beforeUp.innerText = dataPrevString[digit];
         beforeDown.innerText = dataPrevString[digit];
@@ -316,8 +356,17 @@ function setDisplay(indexChangedDigits, dataCurrString, dataPrevString) {
 // Toggle classes for digits(Animation)
 function toggleClasses(indexChangedDigits) {
     indexChangedDigits.forEach((digit) => {
-        const elemWithBefore = indexOfDigits[digit * 2].parentElement.querySelector(".before");
-        const elemWithActive = indexOfDigits[digit * 2].parentElement.querySelector(".active");
+        let elemWithBefore = indexOfDigits[digit * 2].parentElement.querySelector(".before");
+        let elemWithActive = indexOfDigits[digit * 2].parentElement.querySelector(".active");
+
+        // If anim classes doesn't exist
+        if (!elemWithBefore && !elemWithActive) {
+            let elemWithBefore = indexOfDigits[digit * 2].parentElement.querySelector(".num.curr");
+            let elemWithActive = indexOfDigits[digit * 2].parentElement.querySelector(".num.prev");
+            elemWithBefore.classList.add("before");
+            elemWithActive.classList.add("active");
+            return;
+        }
 
         elemWithBefore.classList.remove("before");
         elemWithActive.classList.replace("active", "before");
@@ -333,9 +382,7 @@ function timerOff(id) {
 function isTimeCome(sec) {
     if (sec == 0) {
         timerOff(timerID);
-        setDisplay([0, 1, 2, 3, 4, 5, 6, 7], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]);
-        toggleClasses([0, 1, 2, 3, 4, 5, 6, 7]);
-        // resetDigits();
+        resetDigits();
         startBtn.disabled = false;
         Notiflix.Notify.success("Time has come!");
     }
@@ -343,26 +390,7 @@ function isTimeCome(sec) {
 
 // Remove all anim classes
 function resetDigits() {
-    const zero = "00";
-    display.days.setPrev(zero);
-    display.hours.setPrev(zero);
-    display.mins.setPrev(zero);
-    display.secs.setPrev(zero);
-
-    display.days.setCurr(zero);
-    display.hours.setCurr(zero);
-    display.mins.setCurr(zero);
-    display.secs.setCurr(zero);
-
-    // For simple timer
-    days.innerText = zero;
-    hours.innerText = zero;
-    mins.innerText = zero;
-    secs.innerText = zero;
-    indexOfDigits.forEach((element) => {
-        element.classList.remove("before");
-        element.classList.remove("active");
-    });
+    setDisplay([0, 1, 2, 3, 4, 5, 6, 7], "00000000", "00000000");
 }
 
 // Lead zero
