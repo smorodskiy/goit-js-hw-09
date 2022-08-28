@@ -102,7 +102,7 @@ function getIndexChangedDigits(arrCurr, arrPrev) {
 function render(param) {
     let dataCurr;
     let dataPrev;
-    
+
     // If it's the timer first starting
     if (param != undefined && param.firstRun == true) {
         dataCurr = convertMs(timeLeftPrev);
