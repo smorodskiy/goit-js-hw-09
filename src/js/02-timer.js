@@ -108,6 +108,7 @@ function getIndexChangedDigits(arrCurr, arrPrev) {
 function render() {
     let dataCurr;
     let dataPrev;
+    let dataPrevSimple;
     let dataCurrString;
     let dataPrevString;
 
