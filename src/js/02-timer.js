@@ -22,6 +22,7 @@ const options = {
     time_24hr: true,
     defaultDate: new Date(),
     minuteIncrement: 1,
+    enableSeconds: true,
     // minDate: "today",
     onClose(selectedDates) {
         selectedDate = selectedDates[0];
@@ -40,6 +41,16 @@ startBtn.addEventListener("click", () => {
     if (checkDate(selectedDate)) setTimer();
 });
 
+function getTimeLeft() {
+    // Get current date
+    const today = new Date();
+
+    // How much time you have
+    timeLeft = Math.round((selectedDate - today) / 1000);
+
+    return timeLeft;
+}
+
 // Check date is correct
 function checkDate(selectedDate) {
     // Remove timer if already set
@@ -52,11 +63,8 @@ function checkDate(selectedDate) {
         return false;
     }
 
-    // Get current date
-    const today = new Date();
-
     // How much time you have
-    timeLeft = Math.trunc((selectedDate - today) / 1000);
+    timeLeft = getTimeLeft();
 
     // Return if selected date is not in future
     if (timeLeft < 1) {
@@ -79,10 +87,8 @@ function setTimer() {
     // Remove timer if already set
     if (timerID) timerOff(timerID);
 
-    // First rendering(cuz only changed numbers are updated in the timer)
-    render({
-        firstRun: true,
-    });
+    // First displaying
+    render();
 
     // Starting timer and rendering display
     timerID = setInterval(render, 1000);
@@ -99,23 +105,26 @@ function getIndexChangedDigits(arrCurr, arrPrev) {
 }
 
 // Start timer
-function render(param) {
+function render() {
     let dataCurr;
     let dataPrev;
+    let dataCurrString;
+    let dataPrevString;
 
-    // If it's the timer first starting
-    if (param != undefined && param.firstRun == true) {
-        dataCurr = convertMs(timeLeftPrev);
-        dataPrev = convertMs(timeLeft);
-    } else {
-        // obj {days, hours, mins, secs}
-        dataCurr = convertMs(timeLeft - 1);
-        dataPrev = convertMs(timeLeft - 2);
-    }
+    // get actual time on every render
+    timeLeft = getTimeLeft();
+
+    // Checking time
+    if (isTimeCome(timeLeft)) return;
+
+    // obj {days, hours, mins, secs}
+    dataCurr = convertMs(timeLeftPrev);
+    dataPrev = convertMs(timeLeft);
+    dataPrevSimple = convertMs(timeLeft + 1);
 
     // Combine time to one strings
-    let dataCurrString = dataCurr.days + dataCurr.hours + dataCurr.minutes + dataCurr.seconds;
-    let dataPrevString = dataPrev.days + dataPrev.hours + dataPrev.minutes + dataPrev.seconds;
+    dataCurrString = dataCurr.days + dataCurr.hours + dataCurr.minutes + dataCurr.seconds;
+    dataPrevString = dataPrev.days + dataPrev.hours + dataPrev.minutes + dataPrev.seconds;
 
     // If more then 99 days
     if (dataCurrString.length > 8 || dataPrevString.length > 8) {
@@ -132,41 +141,44 @@ function render(param) {
     // Switch classes for animations
     toggleClasses(indexChangedDigits);
 
-    // Simple counter
-    days.innerText = dataCurr.days;
-    hours.innerText = dataCurr.hours;
-    mins.innerText = dataCurr.minutes;
-    secs.innerText = dataCurr.seconds;
-
-    // Reduce time
-    timeLeft--;
+    // Set values to simple display
+    setDisplaySimple(dataPrevSimple);
 
     // Save time for next timer starting
     timeLeftPrev = timeLeft;
+}
 
-    // Checking time
-    isTimeCome(timeLeft);
+function queryElements(digit) {
+    // Search "before" class
+    let beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".before .up .inn");
+    let beforeDown = indexOfDigits[digit * 2].parentElement.querySelector(".before .down .inn");
+    // Search "active" class
+    let activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".active .up .inn");
+    let activeDown = indexOfDigits[digit * 2].parentElement.querySelector(".active .down .inn");
+
+    // If anim classes doesn't exist
+    if (!beforeUp && !beforeDown && !activeUp && !activeDown) {
+        beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".num.prev .up .inn");
+        beforeDown = indexOfDigits[digit * 2].parentElement.querySelector(".num.prev .down .inn");
+        activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".num.curr .up .inn");
+        activeDown = indexOfDigits[digit * 2].parentElement.querySelector(".num.curr .down .inn");
+    }
+
+    return { beforeUp, beforeDown, activeUp, activeDown };
+}
+
+function setDisplaySimple(objData) {
+    // Simple counter
+    days.innerText = objData.days;
+    hours.innerText = objData.hours;
+    mins.innerText = objData.minutes;
+    secs.innerText = objData.seconds;
 }
 
 // Set numbers for changed displays
 function setDisplay(indexChangedDigits, dataCurrString, dataPrevString) {
     indexChangedDigits.forEach((digit) => {
-        // Search "before" class
-        let beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".before .up .inn");
-        let beforeDown = indexOfDigits[digit * 2].parentElement.querySelector(".before .down .inn");
-        // Search "active" class
-        let activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".active .up .inn");
-        let activeDown = indexOfDigits[digit * 2].parentElement.querySelector(".active .down .inn");
-
-        // If anim classes doesn't exist
-        if (!beforeUp && !beforeDown && !activeUp && !activeDown) {
-            beforeUp = indexOfDigits[digit * 2].parentElement.querySelector(".num.prev .up .inn");
-            beforeDown =
-                indexOfDigits[digit * 2].parentElement.querySelector(".num.prev .down .inn");
-            activeUp = indexOfDigits[digit * 2].parentElement.querySelector(".num.curr .up .inn");
-            activeDown =
-                indexOfDigits[digit * 2].parentElement.querySelector(".num.curr .down .inn");
-        }
+        const { beforeUp, beforeDown, activeUp, activeDown } = queryElements(digit);
 
         beforeUp.innerText = dataPrevString[digit];
         beforeDown.innerText = dataPrevString[digit];
@@ -174,6 +186,22 @@ function setDisplay(indexChangedDigits, dataCurrString, dataPrevString) {
         activeDown.innerText = dataCurrString[digit];
     });
 }
+
+// Get nums from display
+// function getDisplay() {
+//     const timeCurr = [];
+//     const timePrev = [];
+//     const displayLen = [...indexOfDigits].length / 2;
+
+//     for (let i = 0; i < displayLen; i++) {
+//         const { activeUp, beforeDown } = queryElements(i);
+
+//         timeCurr.push(activeUp.innerText);
+//         timePrev.push(beforeDown.innerText);
+//     }
+
+//     return { timeCurr, timePrev };
+// }
 
 // Toggle classes for digits(Animation)
 function toggleClasses(indexChangedDigits) {
@@ -199,21 +227,32 @@ function toggleClasses(indexChangedDigits) {
 // Remove timer
 function timerOff(id) {
     clearInterval(id);
+    timerID = null;
 }
 
 // Checking time is out or no
 function isTimeCome(sec) {
-    if (sec == 0) {
+    if (sec < 0) {
         timerOff(timerID);
-        resetDigits();
         startBtn.disabled = false;
+        resetDigits();
         Notiflix.Notify.success("Time has come!");
+        return true;
     }
+    return false;
 }
 
 // Remove all anim classes
 function resetDigits() {
     setDisplay([0, 1, 2, 3, 4, 5, 6, 7], "00000000", "00000000");
+    toggleClasses([0, 1, 2, 3, 4, 5, 6, 7]);
+    setDisplaySimple({
+        days: "00",
+        hours: "00",
+        minutes: "00",
+        seconds: "00",
+    });
+    timeLeftPrev = 0;
 }
 
 // Lead zero
@@ -222,7 +261,7 @@ function addLeadingZero(value) {
 }
 
 // Convert ms to obj
-function convertMs(ms) {
+function convertMs(sec) {
     // Number of milliseconds per unit of time
     const second = 1;
     const minute = second * 60;
@@ -230,13 +269,13 @@ function convertMs(ms) {
     const day = hour * 24;
 
     // Remaining days
-    const days = addLeadingZero(Math.floor(ms / day));
+    const days = addLeadingZero(Math.floor(sec / day));
     // Remaining hours
-    const hours = addLeadingZero(Math.floor((ms % day) / hour));
+    const hours = addLeadingZero(Math.floor((sec % day) / hour));
     // Remaining minutes
-    const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
+    const minutes = addLeadingZero(Math.floor(((sec % day) % hour) / minute));
     // Remaining seconds
-    const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
+    const seconds = addLeadingZero(Math.floor((((sec % day) % hour) % minute) / second));
 
     return { days, hours, minutes, seconds };
 }
